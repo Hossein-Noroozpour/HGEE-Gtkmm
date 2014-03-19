@@ -1,0 +1,50 @@
+#version 430
+out vec4 fragColor;
+in pixelData
+{
+	vec3 pos;
+} pixelIn;
+//number of boundaries
+#define nob 8
+// 0 ice
+// 1 snow
+// 2 mountain stone
+// 3 grass1
+// 4 grass2
+// 6 grass3
+// 5 sand
+// 7 sea bed
+uniform sampler2D ts[nob];
+//height boundaries
+const float hbs[] = {200.0, 150.0, 100.0, 50.0, 20.0, 5.0, 0.0, -5.0};
+#define height pixelIn.pos.z
+#define stoneIndex 3
+//draw with boundaries
+void drawB(int tex1, int tex2)
+{
+	float texR = (height - hbs[tex2])/(hbs[tex1] - hbs[tex2]);
+	float texRR = 1.0 - texR;
+	fragColor = (texture2D(ts[tex1], pixelIn.pos.xy) * texR) + (texture2D(ts[tex2], pixelIn.pos.xy) * texRR);
+}
+void main()
+{
+	if(height > hbs[0])
+	{
+		fragColor = texture2D(ts[0], pixelIn.pos.xy);
+	}
+	else
+	{
+		for(int i1 = 1, i2 = 2; i2 < nob; i1++, i2++)
+		{	
+			if(height > hbs[i1])
+			{	
+				drawB(i1, i2);
+				break;
+			}
+		}
+		if(height < hbs[7])
+		{
+			fragColor = texture2D(ts[7], pixelIn.pos.xy);
+		}
+	}
+};

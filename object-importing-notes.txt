@@ -1,0 +1,3 @@
+Imported object must have vertex, normal and uv and every faces must be triangulated and every mesh must associated with
+an occlusion tester mesh name of this mesh must be name of base object plus "_occlusion_test" and this object is better
+to be child of base object.

@@ -1,0 +1,2 @@
+Terrain is not complete yet!
+There is some bug in it, maybe in load (TerrainWindow), or maybe in render.

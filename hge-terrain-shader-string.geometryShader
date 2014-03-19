@@ -1,0 +1,61 @@
+#version 330
+layout (triangles) in;
+layout (triangle_strip, max_vertices = 3) out;
+in vertexData
+{
+	vec3 normal;
+} vertexIn [ ];
+out pixelData
+{
+	vec3 pos;
+} pixelOut;
+//model view projection matrix
+uniform mat4 mvpm;
+//camera position relative to model
+uniform vec3 cprtm;
+//level of detail number
+uniform int lodn;
+#define LOD_THRESHOLD0 500.0
+#define LOD_THRESHOLD1 1000.0
+#define LOD_THRESHOLD2 2000.0
+void draw()
+{
+	for(int i = 0; i < 3; i++)
+	{
+		gl_Position = mvpm * gl_in[i].gl_Position;
+		pixelOut.pos = gl_in[i].gl_Position.xyz;
+		EmitVertex();
+	}
+};
+// draw with threshold args: lower bound and upper bound
+void drawT(float lb, float ub)
+{
+	vec3 thr = vec3(abs(gl_in[0].gl_Position.x - cprtm.x),
+			abs(gl_in[0].gl_Position.y - cprtm.y),
+			abs(gl_in[0].gl_Position.z - cprtm.z));
+	if( (lb <= thr.x) && (thr.x < ub) &&
+		(lb <= thr.y) && (thr.y < ub) &&
+		(lb <= thr.z) && (thr.z < ub))
+	{
+		draw();
+	}
+};
+void main()
+{
+	switch ( lodn )
+	{
+		case 0:
+			drawT ( 0.0 , LOD_THRESHOLD0 ) ;
+			break ;
+		case 1:
+			drawT ( LOD_THRESHOLD0 , LOD_THRESHOLD1 ) ;
+			break ;
+		case 2:
+			drawT ( LOD_THRESHOLD1 , LOD_THRESHOLD2 ) ;
+			break ;
+		case 3:
+			draw();
+			break ;
+	};
+	EndPrimitive();
+};

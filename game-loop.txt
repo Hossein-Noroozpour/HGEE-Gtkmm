@@ -1,0 +1,6 @@
+Game loop is as follow:
+
+	1 - Render terrain.
+	1 - Occlusion queries.
+	2 - Physics calculations for next frame refresh.
+	3 - Drawing command.

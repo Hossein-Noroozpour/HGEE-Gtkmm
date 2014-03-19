@@ -1,0 +1,1 @@
+terrain height map must be square and its dimentions must be power of 2.
